@@ -14,13 +14,21 @@ function extractSection(source: string, startTag: string, endTag: string): strin
   return source.slice(startIndex + startTag.length, endIndex);
 }
 
+function sanitizeBody(body: string) {
+  return body
+    .replace(/<!--\s*LOADER\s*-->/gi, '')
+    .replace(/<div id="loader"[^>]*>[\s\S]*?<\/div>/i, '')
+    .trim();
+}
+
 export function getSourcePage() {
   const source = fs.readFileSync(sourcePath, 'utf8');
+  const body = sanitizeBody(extractSection(source, '<body>', '</body>'));
 
   return {
     title: /<title>(.*?)<\/title>/i.exec(source)?.[1] ?? 'Portfolio',
     styles: extractSection(source, '<style>', '</style>'),
-    body: extractSection(source, '<body>', '</body>'),
+    body,
     scripts: extractSection(source, '<script>', '</script>'),
   };
 }
