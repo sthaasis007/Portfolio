@@ -1845,31 +1845,57 @@ document.querySelectorAll('.counter-target').forEach(el => counterObs.observe(el
 
 /* ── SIDEBAR ── */
 function toggleSidebar() {
-  const sb = document.getElementById('sidebar');
-  const ov = document.getElementById('sidebarOverlay');
+  const sb = document.getElementById('sbDrawer');
+  const ov = document.getElementById('sbOverlay');
+  if (!sb || !ov) return;
   sb.classList.toggle('open');
   ov.classList.toggle('show');
   document.body.style.overflow = sb.classList.contains('open') ? 'hidden' : '';
 }
 function closeSidebar() {
-  document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('sidebarOverlay').classList.remove('show');
+  const sb = document.getElementById('sbDrawer');
+  const ov = document.getElementById('sbOverlay');
+  if (sb) sb.classList.remove('open');
+  if (ov) ov.classList.remove('show');
   document.body.style.overflow = '';
 }
-document.getElementById('sidebarOverlay').addEventListener('click', closeSidebar);
+function sbClose() {
+  closeSidebar();
+}
+function sbToggleSub(panelId, trigger) {
+  const panel = document.getElementById('sbsub-' + panelId);
+  if (!panel) return;
+  const isOpen = panel.style.display === 'block';
+  document.querySelectorAll('.sb-sub').forEach((sub) => {
+    sub.style.display = 'none';
+  });
+  document.querySelectorAll('.sb-item').forEach((item) => {
+    item.classList.remove('active');
+  });
+  if (!isOpen) {
+    panel.style.display = 'block';
+    if (trigger) trigger.classList.add('active');
+  }
+}
+const sidebarOverlay = document.getElementById('sbOverlay');
+if (sidebarOverlay) {
+  sidebarOverlay.addEventListener('click', closeSidebar);
+}
 
 function setPanel(panelId, railItem) {
   // Update rail active state
   document.querySelectorAll('.rail-item').forEach(i => i.classList.remove('active'));
-  railItem.classList.add('active');
+  if (railItem) railItem.classList.add('active');
   // Switch panels
   document.querySelectorAll('.panel-content').forEach(p => p.style.display = 'none');
-  document.getElementById('panel-' + panelId).style.display = 'block';
+  const panel = document.getElementById('panel-' + panelId);
+  if (panel) panel.style.display = 'block';
   // Open sidebar if closed
-  const sb = document.getElementById('sidebar');
-  if (!sb.classList.contains('open')) {
+  const sb = document.getElementById('sbDrawer');
+  if (sb && !sb.classList.contains('open')) {
     sb.classList.add('open');
-    document.getElementById('sidebarOverlay').classList.add('show');
+    const overlay = document.getElementById('sbOverlay');
+    if (overlay) overlay.classList.add('show');
     document.body.style.overflow = 'hidden';
   }
 }
