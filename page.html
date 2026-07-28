@@ -1687,11 +1687,17 @@ footer{border-top:1px solid var(--border);padding:40px}
 
 <script>
 /* ── LOADER ── */
-window.addEventListener('load', () => {
-  setTimeout(() => {
-    document.getElementById('loader').classList.add('gone');
-  }, 600);
-});
+function hideLoader() {
+  const loader = document.getElementById('loader');
+  if (!loader) return;
+  loader.classList.add('gone');
+}
+
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+  setTimeout(hideLoader, 150);
+} else {
+  window.addEventListener('load', () => setTimeout(hideLoader, 150), { once: true });
+}
 
 /* ── SCROLL PROGRESS BAR ── */
 const scrollBar = document.getElementById('scroll-bar');
